@@ -363,8 +363,8 @@ namespace IrcDotNet
         {
             lock (((ICollection) Modes).SyncRoot)
                 modes.UpdateModes(newModes, newModeParameters, client.ChannelUserModes,
-                    (add, mode, modeParameter) => users.Single(
-                        cu => cu.User.NickName == modeParameter).HandleModeChanged(add, mode));
+                    (add, mode, modeParameter) => users.SingleOrDefault(
+                        cu => cu.User.NickName == modeParameter)?.HandleModeChanged(add, mode));
 
             OnModesChanged(new IrcUserEventArgs(ircMessage, source));
         }
