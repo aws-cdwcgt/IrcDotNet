@@ -347,12 +347,6 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[1] != null);
             WelcomeMessage = message.Parameters[1];
 
-            // Extract nick name, user name, and host name from welcome message. Use fallback info if not present.
-            var nickNameIdMatch = Regex.Match(WelcomeMessage.Split(' ').Last(), regexNickNameId);
-            localUser.NickName = nickNameIdMatch.Groups["nick"].GetValue() ?? localUser.NickName;
-            localUser.UserName = nickNameIdMatch.Groups["user"].GetValue() ?? localUser.UserName;
-            localUser.HostName = nickNameIdMatch.Groups["host"].GetValue() ?? localUser.HostName;
-
             isRegistered = true;
             OnRegistered(new EventArgs());
         }
@@ -947,8 +941,6 @@ namespace IrcDotNet
         [MessageProcessor("332")]
         protected internal void ProcessMessageReplyTopic(IrcMessage message)
         {
-            Debug.Assert(message.Parameters[0] == localUser.NickName);
-
             Debug.Assert(message.Parameters[1] != null);
             var channel = GetChannelFromName(message.Parameters[1]);
             Debug.Assert(message.Parameters[2] != null);
@@ -1059,9 +1051,6 @@ namespace IrcDotNet
         [MessageProcessor("353")]
         protected internal void ProcessMessageReplyNameReply(IrcMessage message)
         {
-            Debug.Assert(message.Parameters[0] == localUser.NickName);
-
-            Debug.Assert(message.Parameters[2] != null);
             var channel = GetChannelFromName(message.Parameters[2]);
             if (channel != null)
             {
@@ -1142,9 +1131,6 @@ namespace IrcDotNet
         [MessageProcessor("366")]
         protected internal void ProcessMessageReplyEndOfNames(IrcMessage message)
         {
-            Debug.Assert(message.Parameters[0] == localUser.NickName);
-
-            Debug.Assert(message.Parameters[1] != null);
             var channel = GetChannelFromName(message.Parameters[1]);
             channel.HandleUsersListReceived();
         }
@@ -1170,9 +1156,6 @@ namespace IrcDotNet
         [MessageProcessor("372")]
         protected internal void ProcessMessageReplyMotd(IrcMessage message)
         {
-            Debug.Assert(message.Parameters[0] == localUser.NickName);
-
-            Debug.Assert(message.Parameters[1] != null);
             motdBuilder.AppendLine(message.Parameters[1]);
         }
 
@@ -1183,9 +1166,6 @@ namespace IrcDotNet
         [MessageProcessor("375")]
         protected internal virtual void ProcessMessageReplyMotdStart(IrcMessage message)
         {
-            Debug.Assert(message.Parameters[0] == localUser.NickName);
-
-            Debug.Assert(message.Parameters[1] != null);
             motdBuilder.Clear();
             motdBuilder.AppendLine(message.Parameters[1]);
         }
@@ -1197,9 +1177,6 @@ namespace IrcDotNet
         [MessageProcessor("376")]
         protected internal void ProcessMessageReplyMotdEnd(IrcMessage message)
         {
-            Debug.Assert(message.Parameters[0] == localUser.NickName);
-
-            Debug.Assert(message.Parameters[1] != null);
             motdBuilder.AppendLine(message.Parameters[1]);
 
             OnMotdReceived(new EventArgs());
